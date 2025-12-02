@@ -185,7 +185,7 @@ int main(void)
   foc_Init(&motor_foc);
 
   HAL_TIM_Base_Start_IT(&htim4); // 启动定时�?4中断
-  // HAL_TIM_Base_Start_IT(&htim2); // 启动定时�?2中断
+  HAL_TIM_Base_Start_IT(&htim2); // 启动定时�?2中断
 
   /* USER CODE END 2 */
 
@@ -203,7 +203,7 @@ int main(void)
 
     if (TIM4_flag)
     {
-      // fre++;
+      fre++;
 
       Pidloop(&motor_foc);
       foc_loop(&motor_foc);
