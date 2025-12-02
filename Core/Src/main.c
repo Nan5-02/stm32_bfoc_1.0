@@ -214,8 +214,8 @@ int main(void)
 
     if (TIM2_flag)
     {
-      // printf("Freq: %d Hz,angle_with_rotation: %f,Uq: %f,sys_fre: %d,target_angle: %f\r\n", fre, motor_foc.sensor.angle_with_rotations, motor_foc.Uq, sys_fre, motor_foc.position_pid.setpoint);
-      //      printf("%f,%f,%f\r\n", motor_foc.position_pid.setpoint, motor_foc.sensor.angle_with_rotations, motor_foc.Uq);
+      printf("Freq: %d Hz,angle_with_rotation: %f,Uq: %f,sys_fre: %d,target_angle: %f\r\n", fre, motor_foc.sensor.angle_with_rotations, motor_foc.Uq, sys_fre, motor_foc.position_pid.setpoint);
+      printf("%f,%f,%f\r\n", motor_foc.position_pid.setpoint, motor_foc.sensor.angle_with_rotations, motor_foc.Uq);
       fre = 0;
       sys_fre = 0;
       TIM2_flag = 0;
