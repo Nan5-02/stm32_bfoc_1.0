@@ -39,6 +39,8 @@ typedef struct FOC
     float target_angle;    // 目标位置
     float target_velocity; // 目标速度
 
+    float imu_data;
+
     // 编码器传感器
     Sensor sensor;
 
@@ -47,6 +49,7 @@ typedef struct FOC
     // PID参数
     PID_Controller position_pid;
     PID_Controller velocity_pid;
+    PID_Controller imu_pid;
 
 } FOC;
 

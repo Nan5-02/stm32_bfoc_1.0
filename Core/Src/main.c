@@ -19,6 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "can.h"
 #include "dma.h"
 #include "i2c.h"
 #include "tim.h"
@@ -32,8 +33,8 @@
 #include <dwt_delay.h>
 #include <stdio.h>
 #include "pid.h"
-#include "modbus.h"
 #include "FOC.h"
+#include "MyCan.h"
 
 /* USER CODE END Includes */
 
@@ -117,27 +118,35 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM4_Init();
   MX_TIM2_Init();
+  MX_CAN_Init();
   /* USER CODE BEGIN 2 */
   motor_foc.voltage_power_supply = 12.0f;
   motor_foc.voltage_limit = 12.0f;
   motor_foc.voltage_sensor_align = 3.0f;
   motor_foc.pole_pairs = 7;
-  motor_foc.dir = 1;
+  motor_foc.dir = -1;
   motor_foc.target_velocity = 100.0f;
   motor_foc.Uq = 0.0f;
-  motor_foc.control_target = 3;
-  motor_foc.zero_electric_angle = 2.502505f;
+  motor_foc.control_target = 0;
+  motor_foc.zero_electric_angle = 0.0f;
+  motor_foc.imu_data = 0.0f;
 
   motor_tim.port = htim3;
   motor_tim.channelA = TIM_CHANNEL_2;
   motor_tim.channelB = TIM_CHANNEL_3;
   motor_tim.channelC = TIM_CHANNEL_4;
 
-  motor_position_pid.Kp = 10.0f;
+  motor_foc.imu_pid.Kp = 3.0f;
+  motor_foc.imu_pid.Ki = 0.0f;
+  motor_foc.imu_pid.Kd = 0.0f;
+  motor_foc.imu_pid.direction = -1;
+  motor_foc.imu_pid.setpoint = 0.0f;
+
+  motor_position_pid.Kp = 3.0f;
   motor_position_pid.Ki = 0.0f;
-  motor_position_pid.Kd = 1.0f;
-  motor_position_pid.direction = 1;
-  motor_position_pid.setpoint = 1.0f;
+  motor_position_pid.Kd = 0.0f;
+  motor_position_pid.direction = -1;
+  motor_position_pid.setpoint = 0.0f;
 
   motor_foc.velocity_pid.Kp = 0.2f;
   motor_foc.velocity_pid.Ki = 0.01f;
@@ -150,42 +159,39 @@ int main(void)
   Motor_LinkTim(&motor_foc, &motor_tim);
 
   DWT_Timer_Init();
-  modbus_init();
+  // modbus_init();
+  MyCan_Init();
 
   uint8_t magnet_status = AS5600_checkMagnet();
 
-  if (magnet_status == 0xFF)
+  while (magnet_status != 0)
   {
-    // printf("No Magnet Found! Please check the magnet installation!\r\n");
+    magnet_status = AS5600_checkMagnet();
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 常亮
   }
-  else if (magnet_status == 2)
+
+  if (magnet_status == 0xFF)
   {
-    // printf("Magnet Too Strong! Please use a weaker magnet or increase the distance!\r\n");
-  }
-  else if (magnet_status == 1)
-  {
-    // printf("Magnet Too Weak! Please use a stronger magnet or decrease the distance!\r\n");
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 常亮
   }
   else
   {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET); // 常亮
-    // printf("Magnet Detected! Starting Motor Control...\r\n");
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_SET); // 关闭
   }
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_RESET); // LED ON
 
-  while (modbus_get_motor_start_flag() == 0)
+  while (getCanRunFlag() == 0)
   {
-    modbus_loop();
+    MyCan_ProcessReceivedMessage();
   }
-
+  
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); // LED OFF
 
   foc_Init(&motor_foc);
 
-  HAL_TIM_Base_Start_IT(&htim4); // 启动定时�?4中断
-  HAL_TIM_Base_Start_IT(&htim2); // 启动定时�?2中断
+  HAL_TIM_Base_Start_IT(&htim4); // 启动定时�???4中断
+  // HAL_TIM_Base_Start_IT(&htim2); // 启动定时�???2中断
 
   /* USER CODE END 2 */
 
@@ -199,7 +205,8 @@ int main(void)
 
     // sys_fre++;
 
-    modbus_loop();
+    MyCan_ProcessReceivedMessage();
+    // modbus_loop();
 
     if (TIM4_flag)
     {
@@ -212,14 +219,14 @@ int main(void)
       TIM4_flag = 0;
     }
 
-    if (TIM2_flag)
-    {
-      printf("Freq: %d Hz,angle_with_rotation: %f,Uq: %f,sys_fre: %d,target_angle: %f\r\n", fre, motor_foc.sensor.angle_with_rotations, motor_foc.Uq, sys_fre, motor_foc.position_pid.setpoint);
-      printf("%f,%f,%f\r\n", motor_foc.position_pid.setpoint, motor_foc.sensor.angle_with_rotations, motor_foc.Uq);
-      fre = 0;
-      sys_fre = 0;
-      TIM2_flag = 0;
-    }
+    // if (TIM2_flag)
+    // {
+    //   printf("Freq: %d Hz,angle_with_rotation: %f,Uq: %f,sys_fre: %d,target_angle: %f\r\n", fre, motor_foc.sensor.angle_with_rotations, motor_foc.Uq, sys_fre, motor_foc.position_pid.setpoint);
+    //   printf("%f,%f,%f\r\n", motor_foc.position_pid.setpoint, motor_foc.sensor.angle_with_rotations, motor_foc.Uq);
+    //   fre = 0;
+    //   sys_fre = 0;
+    //   TIM2_flag = 0;
+    // }
   }
   /* USER CODE END 3 */
 }

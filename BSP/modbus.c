@@ -5,11 +5,11 @@
 #include "FOC.h"
 #include <main.h>
 
-uint8_t uart1_rx_buf[100];
+uint8_t uart1_rx_buf[10];
 uint16_t uart1_rx_size;
 
 uint8_t rx_state = 0;
-uint8_t frame_acc[100];
+uint8_t frame_acc[10];
 uint16_t frame_acc_len = 0;
 uint8_t collecting = 0;
 

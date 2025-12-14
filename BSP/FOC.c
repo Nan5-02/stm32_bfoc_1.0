@@ -171,10 +171,13 @@ void foc_loop(FOC *foc)
 {
    Sensor_Update(&foc->sensor);
    foc->angle_el = _electricalAngle(foc);
+   //   foc->Uq = 1.0f;
    if (foc->control_target == 1) // 速度控制
       foc->Uq = foc->position_pid.output;
    else if (foc->control_target == 2) // 速度控制
       foc->Uq = foc->velocity_pid.output;
+   else if (foc->control_target == 3) // 开环控制
+      foc->Uq = foc->position_pid.output;
 }
 
 void foc_move(FOC *foc)
@@ -211,6 +214,10 @@ void Pidloop(FOC *foc)
       PidCompute(&foc->position_pid, foc->sensor.angle_with_rotations - foc->zero_electric_angle);
    else if (foc->control_target == 2) // 速度控制
       PidCompute(&foc->velocity_pid, foc->sensor.velocity);
+   else if (foc->control_target == 3)
+   {
+      PidCompute(&foc->imu_pid, foc->imu_data);
+   }
 }
 
 void Motor_SetFocControlMode(FOC *foc, uint8_t mode)

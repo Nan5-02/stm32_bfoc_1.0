@@ -21,6 +21,7 @@ f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_e
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_exti.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h
+f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_can.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
@@ -29,6 +30,7 @@ f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 f103_foc_test01\main.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+f103_foc_test01\main.o: ../Core/Inc/can.h
 f103_foc_test01\main.o: ../Core/Inc/dma.h
 f103_foc_test01\main.o: ../Core/Inc/i2c.h
 f103_foc_test01\main.o: ../Core/Inc/tim.h
@@ -38,7 +40,7 @@ f103_foc_test01\main.o: ../BSP/AS5600.h
 f103_foc_test01\main.o: ../BSP/dwt_delay.h
 f103_foc_test01\main.o: D:\keil\ARM\ARMCC\Bin\..\include\stdio.h
 f103_foc_test01\main.o: ../BSP/pid.h
-f103_foc_test01\main.o: ../BSP/modbus.h
 f103_foc_test01\main.o: ../BSP/FOC.h
 f103_foc_test01\main.o: ../BSP/sensor.h
 f103_foc_test01\main.o: D:\keil\ARM\ARMCC\Bin\..\include\math.h
+f103_foc_test01\main.o: ../BSP/MyCan.h
