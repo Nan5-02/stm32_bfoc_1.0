@@ -35,7 +35,7 @@ void PidCompute(PID_Controller *pid, float measurement)
     float raw_d = (error - pid->previous_error) / dt;
     // 低通滤波 a = dt/(RC + dt)，若未配置频率则给默认 100Hz
     if (pid->d_filter_rc <= 0.0f)
-        pid->d_filter_rc = 1.0f / (2.0f * PI * 20.0f);
+        pid->d_filter_rc = 1.0f / (2.0f * PI * 30.0f);
     float a = dt / (pid->d_filter_rc + dt);
 
     pid->d_filtered = a * raw_d + (1.0f - a) * pid->d_filtered;

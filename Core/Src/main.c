@@ -60,6 +60,8 @@ FOC motor_foc = {0};
 Tim motor_tim = {0};
 Sensor motor_sensor = {0};
 PID_Controller motor_position_pid = {0};
+PID_Controller motor_velocity_pid = {0};
+PID_Controller motor_imu_pid = {0};
 
 uint8_t TIM4_flag = 0;
 uint16_t TIM4_fre = 0;
@@ -127,7 +129,7 @@ int main(void)
   motor_foc.dir = -1;
   motor_foc.target_velocity = 100.0f;
   motor_foc.Uq = 0.0f;
-  motor_foc.control_target = 0;
+  motor_foc.control_target = 3;
   motor_foc.zero_electric_angle = 0.0f;
   motor_foc.imu_data = 0.0f;
 
@@ -136,15 +138,15 @@ int main(void)
   motor_tim.channelB = TIM_CHANNEL_3;
   motor_tim.channelC = TIM_CHANNEL_4;
 
-  motor_foc.imu_pid.Kp = 3.0f;
-  motor_foc.imu_pid.Ki = 0.0f;
-  motor_foc.imu_pid.Kd = 0.0f;
-  motor_foc.imu_pid.direction = -1;
-  motor_foc.imu_pid.setpoint = 0.0f;
+  motor_imu_pid.Kp = 5.0f;
+  motor_imu_pid.Ki = 0.0f;
+  motor_imu_pid.Kd = 0.1f;
+  motor_imu_pid.direction = -1;
+  motor_imu_pid.setpoint = 0.0f;
 
   motor_position_pid.Kp = 3.0f;
   motor_position_pid.Ki = 0.0f;
-  motor_position_pid.Kd = 0.0f;
+  motor_position_pid.Kd = 0.1f;
   motor_position_pid.direction = -1;
   motor_position_pid.setpoint = 0.0f;
 
@@ -155,6 +157,7 @@ int main(void)
   motor_foc.velocity_pid.setpoint = 15.0f;
 
   Motor_LinkPositionPID(&motor_foc, &motor_position_pid);
+  Motor_LinkImuPID(&motor_foc, &motor_imu_pid);
   Motor_LinkSensor(&motor_foc, &motor_sensor);
   Motor_LinkTim(&motor_foc, &motor_tim);
 
@@ -164,7 +167,7 @@ int main(void)
 
   uint8_t magnet_status = AS5600_checkMagnet();
 
-  while (magnet_status != 0)
+  while (magnet_status == 0xFF)
   {
     magnet_status = AS5600_checkMagnet();
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 常亮
@@ -185,7 +188,7 @@ int main(void)
   {
     MyCan_ProcessReceivedMessage();
   }
-  
+
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); // LED OFF
 
   foc_Init(&motor_foc);
@@ -208,6 +211,19 @@ int main(void)
     MyCan_ProcessReceivedMessage();
     // modbus_loop();
 
+    // if (motor_foc.control_target == 3)
+    // {
+    //   if (getImuDataFlag())
+    //   {
+    //     Pidloop(&motor_foc);
+    //     foc_loop(&motor_foc);
+    //     foc_move(&motor_foc);
+
+    //     clealImuDataFlag();
+    //   }
+    // }
+    // else
+    // {
     if (TIM4_flag)
     {
       fre++;
@@ -218,6 +234,7 @@ int main(void)
 
       TIM4_flag = 0;
     }
+    // }
 
     // if (TIM2_flag)
     // {

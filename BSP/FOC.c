@@ -24,6 +24,11 @@ void Motor_LinkVelocityPID(FOC *foc, PID_Controller *pid)
 {
    foc->velocity_pid = *pid;
 }
+// 关联IMU PID到FOC结构体
+void Motor_LinkImuPID(FOC *foc, PID_Controller *pid)
+{
+   foc->imu_pid = *pid;
+}
 
 void Motor_SetPositionPID(FOC *foc, PID_Controller pid)
 {
@@ -176,8 +181,8 @@ void foc_loop(FOC *foc)
       foc->Uq = foc->position_pid.output;
    else if (foc->control_target == 2) // 速度控制
       foc->Uq = foc->velocity_pid.output;
-   else if (foc->control_target == 3) // 开环控制
-      foc->Uq = foc->position_pid.output;
+   else if (foc->control_target == 3) // IMU控制
+      foc->Uq = foc->imu_pid.output;
 }
 
 void foc_move(FOC *foc)

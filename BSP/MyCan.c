@@ -88,10 +88,21 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
     }
 }
 
+// 电机运行
 uint8_t can_run_flag = 0;
 uint8_t getCanRunFlag(void)
 {
     return can_run_flag;
+}
+
+uint8_t imu_data_flag;
+uint8_t getImuDataFlag(void)
+{
+    return imu_data_flag;
+}
+void clealImuDataFlag(void)
+{
+    imu_data_flag = 0;
 }
 
 void MyCan_ProcessReceivedMessage(void)
@@ -114,8 +125,10 @@ void MyCan_ProcessReceivedMessage(void)
         // 姿态角 0x303
         else if (can_rxHeader.StdId == 0x303)
         {
+            HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 接收到IMU数据时切换LED状态
             float pitch;
             memcpy(&pitch, &can_rx_data[0], 4);
+            pitch = pitch * 3.1415926f / 180.0f; // 转为弧度
             if (motor_foc.control_target == 0)
             {
                 motor_foc.Uq = pitch;
@@ -132,6 +145,7 @@ void MyCan_ProcessReceivedMessage(void)
             {
                 motor_foc.imu_data = pitch;
             }
+            imu_data_flag = 1;
         }
         // 电机控制模式
         else if (can_rxHeader.StdId == 0x304)
@@ -190,6 +204,7 @@ void MyCan_ProcessReceivedMessage(void)
             }
             else if (motor_foc.control_target == 3)
             {
+
                 motor_foc.imu_pid.Kd = Kd;
             }
         }

@@ -14,5 +14,9 @@ HAL_StatusTypeDef MyCan_Receive(CAN_RxHeaderTypeDef *rxHeader, uint8_t *data);
 void MyCan_ProcessReceivedMessage(void);
 // 获取CAN运行状态标志
 uint8_t getCanRunFlag(void);
+// 获取IMU数据接收标志
+uint8_t getImuDataFlag(void);
+// 清除IMU数据接收标志
+void clealImuDataFlag(void);
 
 #endif

@@ -84,5 +84,7 @@ void Motor_LinkTim(FOC *foc, Tim *tim);
 void Motor_LinkSensor(FOC *foc, Sensor *sensor);
 void Motor_LinkPositionPID(FOC *foc, PID_Controller *pid);
 void Motor_LinkVelocityPID(FOC *foc, PID_Controller *pid);
+// 关联IMU PID到FOC结构体
+void Motor_LinkImuPID(FOC *foc, PID_Controller *pid);
 
 #endif
