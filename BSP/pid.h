@@ -22,9 +22,18 @@ typedef struct
     float d_filter_rc;     // RC 常数 = 1/(2πF)
     uint32_t last_time_us; // 上次时间戳(微秒)
 
+    float output_filtered;  // 低通滤波后的输出
+    float output_filter_rc; // 输出滤波器 RC 常数 = 1/(2πF)
+
+    float input_filtered;  // 低通滤波后的输入
+    float input_filter_rc; // 输入滤波器 RC 常数 = 1/(2πF)
+
 } PID_Controller;
 
 void PidCompute(PID_Controller *pid, float measurement);
-void PidComputeUq(PID_Controller *pid);
+void PID_SetDerivativeFilterFreq(PID_Controller *pid, float F);
+void PID_SetOutputFilterFreq(PID_Controller *pid, float F);
+void PID_SetInputFilterFreq(PID_Controller *pid, float F);
+void fittered_init(void);
 
 #endif

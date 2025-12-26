@@ -16,6 +16,8 @@
 "f103_foc_test01\dwt_delay.o"
 "f103_foc_test01\pid.o"
 "f103_foc_test01\mycan.o"
+"f103_foc_test01\lpd.o"
+"f103_foc_test01\eeprom.o"
 "f103_foc_test01\stm32f1xx_hal_gpio_ex.o"
 "f103_foc_test01\stm32f1xx_hal_can.o"
 "f103_foc_test01\stm32f1xx_hal.o"

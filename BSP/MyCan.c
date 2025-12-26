@@ -128,7 +128,9 @@ void MyCan_ProcessReceivedMessage(void)
             HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 接收到IMU数据时切换LED状态
             float pitch;
             memcpy(&pitch, &can_rx_data[0], 4);
-            pitch = pitch * 3.1415926f / 180.0f; // 转为弧度
+            if (pitch < 0)
+                pitch = 360.0f + pitch;
+            pitch = (pitch + 0.0) * 3.1415926f / 180.0f; // 转为弧度
             if (motor_foc.control_target == 0)
             {
                 motor_foc.Uq = pitch;

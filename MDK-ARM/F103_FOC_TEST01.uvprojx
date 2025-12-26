@@ -590,6 +590,26 @@
               <FileType>5</FileType>
               <FilePath>..\BSP\MyCan.h</FilePath>
             </File>
+            <File>
+              <FileName>lpd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\lpd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lpd.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\lpd.h</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\eeprom.c</FilePath>
+            </File>
+            <File>
+              <FileName>eeprom.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\eeprom.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

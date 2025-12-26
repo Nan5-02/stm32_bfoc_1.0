@@ -33,3 +33,4 @@ f103_foc_test01\pid.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.
 f103_foc_test01\pid.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 f103_foc_test01\pid.o: D:\keil\ARM\ARMCC\Bin\..\include\stdio.h
 f103_foc_test01\pid.o: ../BSP/dwt_delay.h
+f103_foc_test01\pid.o: ..\BSP\lpd.h

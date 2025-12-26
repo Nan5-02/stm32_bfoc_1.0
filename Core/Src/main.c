@@ -35,6 +35,7 @@
 #include "pid.h"
 #include "FOC.h"
 #include "MyCan.h"
+#include "eeprom.h"
 
 /* USER CODE END Includes */
 
@@ -129,20 +130,20 @@ int main(void)
   motor_foc.dir = -1;
   motor_foc.target_velocity = 100.0f;
   motor_foc.Uq = 0.0f;
-  motor_foc.control_target = 3;
+  motor_foc.control_target = 1;
   motor_foc.zero_electric_angle = 0.0f;
-  motor_foc.imu_data = 0.0f;
+  motor_foc.imu_data = 1.57f;
 
   motor_tim.port = htim3;
   motor_tim.channelA = TIM_CHANNEL_2;
   motor_tim.channelB = TIM_CHANNEL_3;
   motor_tim.channelC = TIM_CHANNEL_4;
 
-  motor_imu_pid.Kp = 5.0f;
+  motor_imu_pid.Kp = 15.0f;
   motor_imu_pid.Ki = 0.0f;
-  motor_imu_pid.Kd = 0.1f;
+  motor_imu_pid.Kd = 1.0f;
   motor_imu_pid.direction = -1;
-  motor_imu_pid.setpoint = 0.0f;
+  motor_imu_pid.setpoint = 3.14f;
 
   motor_position_pid.Kp = 3.0f;
   motor_position_pid.Ki = 0.0f;
@@ -164,6 +165,31 @@ int main(void)
   DWT_Timer_Init();
   // modbus_init();
   MyCan_Init();
+  fittered_init();
+
+  /* 读取已存零电角度：若有效且非 0 则直接复用，反之待校准后写回 */
+  EEPROM_Init();
+  float stored_zero_angle = 0.0f;
+  if (EEPROM_IsValid() && EEPROM_GetStoredLength() == sizeof(stored_zero_angle))
+  {
+    if (EEPROM_Read(&stored_zero_angle, sizeof(stored_zero_angle)) != HAL_OK)
+    {
+      stored_zero_angle = 0.0f;
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
+      HAL_Delay(100);
+    }
+  }
+  motor_foc.zero_electric_angle = stored_zero_angle;
 
   uint8_t magnet_status = AS5600_checkMagnet();
 
@@ -191,7 +217,15 @@ int main(void)
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); // LED OFF
 
+  float prev_zero_angle = motor_foc.zero_electric_angle;
+
   foc_Init(&motor_foc);
+
+  /* 若先前为 0 而校准后获得非 0 零电角度，则写入 Flash 保存 */
+  if (prev_zero_angle == 0.0f && motor_foc.zero_electric_angle != 0.0f)
+  {
+    EEPROM_Write(&motor_foc.zero_electric_angle, sizeof(motor_foc.zero_electric_angle));
+  }
 
   HAL_TIM_Base_Start_IT(&htim4); // 启动定时�???4中断
   // HAL_TIM_Base_Start_IT(&htim2); // 启动定时�???2中断
@@ -209,6 +243,7 @@ int main(void)
     // sys_fre++;
 
     MyCan_ProcessReceivedMessage();
+    motor_foc.Uq = 0.0f;
     // modbus_loop();
 
     // if (motor_foc.control_target == 3)
@@ -224,7 +259,7 @@ int main(void)
     // }
     // else
     // {
-    if (TIM4_flag)
+    if (TIM4_flag && getImuDataFlag())
     {
       fre++;
 

@@ -44,3 +44,4 @@ f103_foc_test01\main.o: ../BSP/FOC.h
 f103_foc_test01\main.o: ../BSP/sensor.h
 f103_foc_test01\main.o: D:\keil\ARM\ARMCC\Bin\..\include\math.h
 f103_foc_test01\main.o: ../BSP/MyCan.h
+f103_foc_test01\main.o: ../BSP/eeprom.h
