@@ -40,3 +40,4 @@ f103_foc_test01\mycan.o: ..\BSP\sensor.h
 f103_foc_test01\mycan.o: ../Core/Inc/tim.h
 f103_foc_test01\mycan.o: D:\keil\ARM\ARMCC\Bin\..\include\math.h
 f103_foc_test01\mycan.o: ../BSP/dwt_delay.h
+f103_foc_test01\mycan.o: ..\BSP\AS5600.h

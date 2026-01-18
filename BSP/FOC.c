@@ -176,7 +176,7 @@ void foc_loop(FOC *foc)
 {
    Sensor_Update(&foc->sensor);
    foc->angle_el = _electricalAngle(foc);
-   //   foc->Uq = 1.0f;
+   // foc->Uq = 2.0f;
    if (foc->control_target == 1) // 速度控制
       foc->Uq = foc->position_pid.output;
    else if (foc->control_target == 2) // 速度控制
@@ -209,6 +209,7 @@ void openLoopSpeedControl(struct FOC *foc)
       dt = 1e-3f;
 
    foc->angle_el = _normalizeAngle(foc->angle_el + foc->target_velocity * dt);
+   foc->Uq = 3.0f; // 施加一个固定电压矢量
 
    open_loop_timestamp = now_time_us;
 }
@@ -241,4 +242,20 @@ void Motor_SetFocDirection(FOC *foc, uint8_t dir)
 void Motor_SetElectricalpolePairs(FOC *foc, uint8_t pole_pairs)
 {
    foc->pole_pairs = pole_pairs;
+}
+
+void Motor_SetBee(FOC *foc)
+{
+   // 设置PWM占空比
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelC, (uint32_t)(0.03 * 1800));
+   HAL_Delay(200);
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelB, (uint32_t)(0.00 * 1800));
+   HAL_Delay(200);
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelB, (uint32_t)(0.03 * 1800));
+   HAL_Delay(200);
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelB, (uint32_t)(0.00 * 1800));
+   HAL_Delay(200);
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelB, (uint32_t)(0.03 * 1800));
+   HAL_Delay(200);
+   __HAL_TIM_SetCompare(&foc->tim.port, foc->tim.channelB, (uint32_t)(0.00 * 1800));
 }

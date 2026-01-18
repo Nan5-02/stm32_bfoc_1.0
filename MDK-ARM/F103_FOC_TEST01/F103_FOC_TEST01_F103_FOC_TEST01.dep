@@ -36,7 +36,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x662CEB09)
 I (D:\keil\ARM\ARMCC\include\math.h)(0x588B8344)
 I (..\BSP\sensor.h)(0x6911DAB2)
 F (..\BSP\sensor.h)(0x6911DAB2)()
-F (../Core/Src/main.c)(0x694E7D0F)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\main.o --omf_browse f103_foc_test01\main.crf --depend f103_foc_test01\main.d)
+F (../Core/Src/main.c)(0x696B62B1)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\main.o --omf_browse f103_foc_test01\main.crf --depend f103_foc_test01\main.d)
 I (../Core/Inc/main.h)(0x69296BD3)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x662CEB09)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x6938052A)
@@ -77,7 +77,7 @@ I (../BSP/AS5600.h)(0x690F3770)
 I (../BSP/dwt_delay.h)(0x68F743AB)
 I (D:\keil\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (../BSP/pid.h)(0x69466FCA)
-I (../BSP/FOC.h)(0x69414E29)
+I (../BSP/FOC.h)(0x696379D1)
 I (../BSP/sensor.h)(0x6911DAB2)
 I (D:\keil\ARM\ARMCC\include\math.h)(0x588B8344)
 I (../BSP/MyCan.h)(0x69410B80)
@@ -370,8 +370,8 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x662CEB09)
-F (..\BSP\FOC.c)(0x69414E1B)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\foc.o --omf_browse f103_foc_test01\foc.crf --depend f103_foc_test01\foc.d)
-I (..\BSP\FOC.h)(0x69414E29)
+F (..\BSP\FOC.c)(0x69637A40)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\foc.o --omf_browse f103_foc_test01\foc.crf --depend f103_foc_test01\foc.d)
+I (..\BSP\FOC.h)(0x696379D1)
 I (..\BSP\pid.h)(0x69466FCA)
 I (D:\keil\ARM\ARMCC\include\stdint.h)(0x588B8344)
 I (..\BSP\sensor.h)(0x6911DAB2)
@@ -472,7 +472,7 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x662CEB09)
-F (..\BSP\pid.c)(0x694E66F5)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\pid.o --omf_browse f103_foc_test01\pid.crf --depend f103_foc_test01\pid.d)
+F (..\BSP\pid.c)(0x696B5311)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\pid.o --omf_browse f103_foc_test01\pid.crf --depend f103_foc_test01\pid.d)
 I (..\BSP\pid.h)(0x69466FCA)
 I (D:\keil\ARM\ARMCC\include\stdint.h)(0x588B8344)
 I (../Core/Inc/main.h)(0x69296BD3)
@@ -508,7 +508,7 @@ I (D:\keil\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (../BSP/dwt_delay.h)(0x68F743AB)
 I (..\BSP\lpd.h)(0x69329FDE)
 F (..\BSP\pid.h)(0x69466FCA)()
-F (..\BSP\MyCan.c)(0x6947C437)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\mycan.o --omf_browse f103_foc_test01\mycan.crf --depend f103_foc_test01\mycan.d)
+F (..\BSP\MyCan.c)(0x696C9DED)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\mycan.o --omf_browse f103_foc_test01\mycan.crf --depend f103_foc_test01\mycan.d)
 I (..\BSP\MyCan.h)(0x69410B80)
 I (../Core/Inc/can.h)(0x69380528)
 I (../Core/Inc/main.h)(0x69296BD3)
@@ -543,12 +543,13 @@ I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h)(0x662CEB09)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h)(0x662CEB09)
 I (D:\keil\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (D:\keil\ARM\ARMCC\include\string.h)(0x588B8344)
-I (..\BSP\FOC.h)(0x69414E29)
+I (..\BSP\FOC.h)(0x696379D1)
 I (..\BSP\pid.h)(0x69466FCA)
 I (..\BSP\sensor.h)(0x6911DAB2)
 I (../Core/Inc/tim.h)(0x6911D162)
 I (D:\keil\ARM\ARMCC\include\math.h)(0x588B8344)
 I (../BSP/dwt_delay.h)(0x68F743AB)
+I (..\BSP\AS5600.h)(0x690F3770)
 F (..\BSP\MyCan.h)(0x69410B80)()
 F (..\BSP\lpd.c)(0x69465FE6)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../BSP-I.\RTE\_F103_FOC_TEST01-ID:\keil\ARM\PACK\ARM\CMSIS\5.0.1\CMSIS\Include-ID:\keil\ARM\PACK\Keil\STM32F1xx_DFP\2.2.0\Device\Include-D__UVISION_VERSION="524" -D_RTE_ -DSTM32F10X_MD -DUSE_HAL_DRIVER -DSTM32F103xB-o f103_foc_test01\lpd.o --omf_browse f103_foc_test01\lpd.crf --depend f103_foc_test01\lpd.d)
 I (..\BSP\lpd.h)(0x69329FDE)

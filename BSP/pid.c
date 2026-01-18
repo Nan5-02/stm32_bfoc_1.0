@@ -44,7 +44,6 @@ void fittered_init(void)
 
 void PidCompute(PID_Controller *pid, float measurement)
 {
-    static uint8_t first_run = 0;
     /*----------------------------------计算时间戳------------------------------------*/
     uint32_t now_us = DWT_Get_Microsecond();
     float dt = (pid->last_time_us == 0) ? 0.002f : (now_us - pid->last_time_us) * 1e-6f;
@@ -52,13 +51,6 @@ void PidCompute(PID_Controller *pid, float measurement)
         dt = 0.001f;
 
     pid->last_time_us = now_us;
-    if (first_run == 0)
-    {
-        if (measurement - pid->setpoint < 0.1f && measurement - pid->setpoint > -0.1f)
-        {
-            first_run = 1;
-        }
-    }
 
     /*----------------------------------PID计算------------------------------------*/
     // 对输入进行低通滤波（若未配置频率则默认 20Hz）
@@ -87,20 +79,6 @@ void PidCompute(PID_Controller *pid, float measurement)
     // 计算PID原始输出
     float raw_output = (error * pid->Kp + pid->integral * pid->Ki + pid->d_filtered * pid->Kd) * pid->direction; // 计算PID原始输出
 
-    // 对输出进行低通滤波（若未配置频率则默认 200Hz）
-    //    if (pid->output_filter_rc <= 0.0f)
-    //        pid->output_filter_rc = 1.0f / (2.0f * PI * 200.0f);
-    //    float a_out = dt / (pid->output_filter_rc + dt);
-    //    pid->output_filtered = a_out * raw_output + (1.0f - a_out) * pid->output_filtered;
-
     // 使用滤波后的输出
     pid->output = raw_output;
-
-    if (first_run == 0)
-    {
-        if (pid->output >= 6.0f)
-            pid->output = 6.0f;
-        else if (pid->output <= -6.0f)
-            pid->output = -6.0f;
-    }
 }

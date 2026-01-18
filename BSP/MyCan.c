@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "FOC.h"
+#include "AS5600.h"
 
 CAN_RxHeaderTypeDef can_rxHeader;
 uint8_t can_rx_data[8];
 uint8_t can_rx_flag = 0;
+float upload;
 
 extern FOC motor_foc;
 
@@ -17,9 +19,9 @@ HAL_StatusTypeDef MyCan_SetupFilter(void)
     canFilter.FilterActivation = ENABLE;
     canFilter.FilterBank = 0;                          // 使用滤波器0
     canFilter.FilterFIFOAssignment = CAN_FILTER_FIFO0; // 分配到FIFO0
-    canFilter.FilterIdHigh = 0x300 << 5;               // 标准ID左移5位
+    canFilter.FilterIdHigh = 0x200 << 5;               // 标准ID左移5位
     canFilter.FilterIdLow = 0x0000;
-    canFilter.FilterMaskIdHigh = 0x7E0 << 5; // 掩码，匹配所有标准ID
+    canFilter.FilterMaskIdHigh = 0x7E0 << 5; // 只接受 0x200-0x21F 的ID
     canFilter.FilterMaskIdLow = 0x0000;
     canFilter.FilterMode = CAN_FILTERMODE_IDMASK; // 列表模式
     canFilter.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -34,18 +36,21 @@ void MyCan_Init(void)
     if (MyCan_SetupFilter() != HAL_OK)
     {
         printf("CAN filter config failed, err=0x%08lX\r\n", HAL_CAN_GetError(&hcan));
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 错误指示灯常亮
         return;
     }
 
     if (HAL_CAN_Start(&hcan) != HAL_OK)
     {
         printf("CAN start failed, state=%u, err=0x%08lX\r\n", hcan.State, HAL_CAN_GetError(&hcan));
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 错误指示灯常亮
         return;
     }
     // 使能接收中断
     if (HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
     {
         printf("CAN activate notification failed, err=0x%08lX\r\n", HAL_CAN_GetError(&hcan));
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_2, GPIO_PIN_RESET); // 错误指示灯常亮
         return;
     }
 }
@@ -109,54 +114,39 @@ void MyCan_ProcessReceivedMessage(void)
 {
     if (can_rx_flag)
     {
-        // printf("id:%03X,ide:%d\r\n", can_rxHeader.StdId, can_rxHeader.RTR);
-        // 处理接收到的数据
 
-        // 启动电机 0x301
-        if (can_rxHeader.StdId == 0x301)
+        // 复位
+        if (can_rxHeader.StdId == 0x201)
         {
             can_run_flag = 1; // 假设第一个字节表示运行状态
         }
-        // 复位  0x302
-        else if (can_rxHeader.StdId == 0x302)
+        // 系统复位
+        else if (can_rxHeader.StdId == 0x202)
         {
             HAL_NVIC_SystemReset();
         }
-        // 姿态角 0x303
-        else if (can_rxHeader.StdId == 0x303)
+        // IMU数据
+        else if (can_rxHeader.StdId == 0x203)
         {
             HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 接收到IMU数据时切换LED状态
             float pitch;
             memcpy(&pitch, &can_rx_data[0], 4);
-            if (pitch < 0)
-                pitch = 360.0f + pitch;
-            pitch = (pitch + 0.0) * 3.1415926f / 180.0f; // 转为弧度
-            if (motor_foc.control_target == 0)
+            if (upload < 1.0f)
             {
-                motor_foc.Uq = pitch;
+                upload += 0.00001f;
             }
-            else if (motor_foc.control_target == 1)
-            {
-                motor_foc.position_pid.setpoint = pitch;
-            }
-            else if (motor_foc.control_target == 2)
-            {
-                motor_foc.velocity_pid.setpoint = pitch;
-            }
-            else if (motor_foc.control_target == 3)
-            {
-                motor_foc.imu_data = pitch;
-            }
-            imu_data_flag = 1;
+
+            pitch = (pitch + 0.0) * 3.1415926f / 180.0f * upload; // 转为弧度
+            motor_foc.imu_data = pitch;
         }
-        // 电机控制模式
-        else if (can_rxHeader.StdId == 0x304)
+        // 控制模式
+        else if (can_rxHeader.StdId == 0x204)
         {
             uint8_t control_mode = can_rx_data[0];
             motor_foc.control_target = control_mode;
         }
-        // PID P值
-        else if (can_rxHeader.StdId == 0x305)
+        // PID参数设置
+        else if (can_rxHeader.StdId == 0x205)
         {
             float Kp;
             memcpy(&Kp, &can_rx_data[0], 4);
@@ -173,8 +163,8 @@ void MyCan_ProcessReceivedMessage(void)
                 motor_foc.imu_pid.Kp = Kp;
             }
         }
-        // PID I值
-        else if (can_rxHeader.StdId == 0x306)
+        // PID参数设置
+        else if (can_rxHeader.StdId == 0x206)
         {
             float Ki;
             memcpy(&Ki, &can_rx_data[0], 4);
@@ -191,8 +181,8 @@ void MyCan_ProcessReceivedMessage(void)
                 motor_foc.imu_pid.Ki = Ki;
             }
         }
-        // PID D值
-        else if (can_rxHeader.StdId == 0x307)
+        // PID参数设置
+        else if (can_rxHeader.StdId == 0x207)
         {
             float Kd;
             memcpy(&Kd, &can_rx_data[0], 4);
@@ -210,8 +200,8 @@ void MyCan_ProcessReceivedMessage(void)
                 motor_foc.imu_pid.Kd = Kd;
             }
         }
-        // 设置PID方向
-        else if (can_rxHeader.StdId == 0x308)
+        // 方向设置
+        else if (can_rxHeader.StdId == 0x208)
         {
             uint8_t dir = can_rx_data[0];
             if (motor_foc.control_target == 1)
@@ -227,13 +217,104 @@ void MyCan_ProcessReceivedMessage(void)
                 motor_foc.imu_pid.direction = (dir == 0) ? 1 : -1;
             }
         }
-        // 极对数
-        else if (can_rxHeader.StdId == 0x309)
+        // 极对数设置
+        else if (can_rxHeader.StdId == 0x209)
         {
             uint8_t pole_pairs = can_rx_data[0];
             motor_foc.pole_pairs = pole_pairs;
         }
-
+        // 目标设置
+        else if (can_rxHeader.StdId == 0x20A)
+        {
+            float pitch;
+            memcpy(&pitch, &can_rx_data[0], 4);
+            pitch = (pitch + 0.0) * 3.1415926f / 180.0f; // 转为弧度
+            if (motor_foc.control_target == 0)
+            {
+                motor_foc.Uq = pitch;
+            }
+            else if (motor_foc.control_target == 1)
+            {
+                motor_foc.position_pid.setpoint = pitch;
+            }
+            else if (motor_foc.control_target == 2)
+            {
+                motor_foc.velocity_pid.setpoint = pitch;
+            }
+            else if (motor_foc.control_target == 3)
+            {
+                motor_foc.imu_pid.setpoint = pitch;
+            }
+        }
+        // 检查磁编码器状态、运行状态、电机模式、PID方向、极对数
+        else if (can_rxHeader.StdId == 0x20B)
+        {
+            uint8_t magnet_status = AS5600_checkMagnet();
+            uint8_t response_data[8];
+            response_data[0] = magnet_status;
+            response_data[1] = can_run_flag;
+            response_data[2] = motor_foc.control_target;
+            if (motor_foc.control_target == 1)
+            {
+                response_data[3] = motor_foc.position_pid.direction;
+            }
+            else if (motor_foc.control_target == 2)
+            {
+                response_data[3] = motor_foc.velocity_pid.direction;
+            }
+            else if (motor_foc.control_target == 3)
+            {
+                response_data[3] = motor_foc.imu_pid.direction;
+            }
+            response_data[4] = motor_foc.pole_pairs;
+            MyCan_Transmit(0x220, response_data, 5);
+        }
+        // 检查目标位置和PID-P值
+        else if (can_rxHeader.StdId == 0x20C)
+        {
+            uint8_t response_data[8];
+            float target;
+            if (motor_foc.control_target == 1)
+            {
+                target = motor_foc.position_pid.setpoint;
+                memcpy(&response_data[0], &target, 4);
+                memcpy(&response_data[4], &motor_foc.position_pid.Kp, 4);
+            }
+            else if (motor_foc.control_target == 2)
+            {
+                target = motor_foc.velocity_pid.setpoint;
+                memcpy(&response_data[0], &target, 4);
+                memcpy(&response_data[4], &motor_foc.velocity_pid.Kp, 4);
+            }
+            else if (motor_foc.control_target == 3)
+            {
+                target = motor_foc.imu_pid.setpoint;
+                memcpy(&response_data[0], &target, 4);
+                memcpy(&response_data[4], &motor_foc.imu_pid.Kp, 4);
+            }
+            MyCan_Transmit(0x221, response_data, 8);
+        }
+        // 检查目标I和D值
+        else if (can_rxHeader.StdId == 0x20D)
+        {
+            uint8_t response_data[8];
+            if (motor_foc.control_target == 1)
+            {
+                memcpy(&response_data[0], &motor_foc.position_pid.Ki, 4);
+                memcpy(&response_data[4], &motor_foc.position_pid.Kd, 4);
+            }
+            else if (motor_foc.control_target == 2)
+            {
+                memcpy(&response_data[0], &motor_foc.velocity_pid.Ki, 4);
+                memcpy(&response_data[4], &motor_foc.velocity_pid.Kd, 4);
+            }
+            else if (motor_foc.control_target == 3)
+            {
+                memcpy(&response_data[0], &motor_foc.imu_pid.Ki, 4);
+                memcpy(&response_data[4], &motor_foc.imu_pid.Kd, 4);
+            }
+            MyCan_Transmit(0x222, response_data, 8);
+        }
         can_rx_flag = 0; // 清除接收标志
     }
 }

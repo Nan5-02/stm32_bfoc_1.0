@@ -87,4 +87,7 @@ void Motor_LinkVelocityPID(FOC *foc, PID_Controller *pid);
 // 关联IMU PID到FOC结构体
 void Motor_LinkImuPID(FOC *foc, PID_Controller *pid);
 
+// 设置蜂鸣器
+void Motor_SetBee(FOC *foc);
+
 #endif

@@ -127,28 +127,28 @@ int main(void)
   motor_foc.voltage_limit = 12.0f;
   motor_foc.voltage_sensor_align = 3.0f;
   motor_foc.pole_pairs = 7;
-  motor_foc.dir = -1;
-  motor_foc.target_velocity = 100.0f;
+  motor_foc.dir = 1;
+  motor_foc.target_velocity = 200.0f;
   motor_foc.Uq = 0.0f;
-  motor_foc.control_target = 1;
+  motor_foc.control_target = 3;
   motor_foc.zero_electric_angle = 0.0f;
-  motor_foc.imu_data = 1.57f;
+  motor_foc.imu_data = 0.0f;
 
   motor_tim.port = htim3;
   motor_tim.channelA = TIM_CHANNEL_2;
   motor_tim.channelB = TIM_CHANNEL_3;
   motor_tim.channelC = TIM_CHANNEL_4;
 
-  motor_imu_pid.Kp = 15.0f;
+  motor_imu_pid.Kp = 10.0f;
   motor_imu_pid.Ki = 0.0f;
   motor_imu_pid.Kd = 1.0f;
   motor_imu_pid.direction = -1;
-  motor_imu_pid.setpoint = 3.14f;
+  motor_imu_pid.setpoint = 0.0f;
 
   motor_position_pid.Kp = 3.0f;
   motor_position_pid.Ki = 0.0f;
-  motor_position_pid.Kd = 0.1f;
-  motor_position_pid.direction = -1;
+  motor_position_pid.Kd = 0.0f;
+  motor_position_pid.direction = 1;
   motor_position_pid.setpoint = 0.0f;
 
   motor_foc.velocity_pid.Kp = 0.2f;
@@ -163,7 +163,6 @@ int main(void)
   Motor_LinkTim(&motor_foc, &motor_tim);
 
   DWT_Timer_Init();
-  // modbus_init();
   MyCan_Init();
   fittered_init();
 
@@ -176,17 +175,17 @@ int main(void)
     {
       stored_zero_angle = 0.0f;
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
       HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_2); // 错误指示灯常亮
-      HAL_Delay(100);
+      HAL_Delay(300);
     }
   }
   motor_foc.zero_electric_angle = stored_zero_angle;
@@ -216,19 +215,19 @@ int main(void)
   }
 
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11, GPIO_PIN_SET); // LED OFF
-
   float prev_zero_angle = motor_foc.zero_electric_angle;
 
   foc_Init(&motor_foc);
 
   /* 若先前为 0 而校准后获得非 0 零电角度，则写入 Flash 保存 */
+
   if (prev_zero_angle == 0.0f && motor_foc.zero_electric_angle != 0.0f)
   {
     EEPROM_Write(&motor_foc.zero_electric_angle, sizeof(motor_foc.zero_electric_angle));
   }
 
-  HAL_TIM_Base_Start_IT(&htim4); // 启动定时�???4中断
-  // HAL_TIM_Base_Start_IT(&htim2); // 启动定时�???2中断
+  HAL_TIM_Base_Start_IT(&htim4); // 启动定时器4中断
+  // HAL_TIM_Base_Start_IT(&htim2); // 启动定时器2中断
 
   /* USER CODE END 2 */
 
@@ -240,45 +239,14 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-    // sys_fre++;
-
     MyCan_ProcessReceivedMessage();
-    motor_foc.Uq = 0.0f;
-    // modbus_loop();
-
-    // if (motor_foc.control_target == 3)
-    // {
-    //   if (getImuDataFlag())
-    //   {
-    //     Pidloop(&motor_foc);
-    //     foc_loop(&motor_foc);
-    //     foc_move(&motor_foc);
-
-    //     clealImuDataFlag();
-    //   }
-    // }
-    // else
-    // {
-    if (TIM4_flag && getImuDataFlag())
+    if (TIM4_flag)
     {
-      fre++;
-
       Pidloop(&motor_foc);
       foc_loop(&motor_foc);
       foc_move(&motor_foc);
-
       TIM4_flag = 0;
     }
-    // }
-
-    // if (TIM2_flag)
-    // {
-    //   printf("Freq: %d Hz,angle_with_rotation: %f,Uq: %f,sys_fre: %d,target_angle: %f\r\n", fre, motor_foc.sensor.angle_with_rotations, motor_foc.Uq, sys_fre, motor_foc.position_pid.setpoint);
-    //   printf("%f,%f,%f\r\n", motor_foc.position_pid.setpoint, motor_foc.sensor.angle_with_rotations, motor_foc.Uq);
-    //   fre = 0;
-    //   sys_fre = 0;
-    //   TIM2_flag = 0;
-    // }
   }
   /* USER CODE END 3 */
 }
